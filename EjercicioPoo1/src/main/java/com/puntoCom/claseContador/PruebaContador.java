@@ -1,4 +1,4 @@
-package com.puntoComEjercicios.claseContador;
+package com.puntoCom.claseContador;
 
 public class PruebaContador {
 	public static void main(String[] args) {

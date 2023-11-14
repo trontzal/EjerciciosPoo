@@ -1,4 +1,4 @@
-package com.puntoComEjercicios.claseContador;
+package com.puntoCom.claseContador;
 
 public class Contador {
 	private int cont;

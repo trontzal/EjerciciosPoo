@@ -1,3 +1,5 @@
+package com.puntoCom.claseCuenta;
+
 import java.util.Scanner;
 
 public class PruebaCuenta {

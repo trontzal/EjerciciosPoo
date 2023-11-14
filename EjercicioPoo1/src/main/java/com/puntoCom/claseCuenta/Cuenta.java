@@ -1,3 +1,4 @@
+package com.puntoCom.claseCuenta;
 
 public class Cuenta {
 	private String nombre;
