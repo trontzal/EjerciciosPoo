@@ -1,11 +1,20 @@
 package com.tienda.accesodatos;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.tienda.entidades.Producto;
 
 public class DaoProductoSqlite implements DaoProducto {
+
+	private static final String SQL_SELECT = "SELECT id, codigo_barras, nombre, precio, fecha_caducidad, unidades FROM productos";
 
 	private String url;
 
@@ -23,8 +32,23 @@ public class DaoProductoSqlite implements DaoProducto {
 
 	@Override
 	public Iterable<Producto> ObtenerTodos() {
+		List<Producto> productos = new ArrayList<>();
+
 		try (Connection con = obtenerConexion();
-				
+				PreparedStatement pst = con.prepareStatement(SQL_SELECT);
+				ResultSet rs = pst.executeQuery()) {
+
+			while (rs.next()) {
+				// Crear un producto a partir de los datos recuperados de la base de datos
+				Producto producto = filaAProducto(rs);
+				productos.add(producto);
+			}
+
+		} catch (SQLException e) {
+			throw new AccesoDatosException("Error al obtener todos los productos", e);
+		}
+
+		return productos;
 	}
 
 	@Override
@@ -67,6 +91,25 @@ public class DaoProductoSqlite implements DaoProducto {
 	public Iterable<Producto> obtenerCaducados(LocalDate fecha) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private Connection obtenerConexion() {
+		try {
+			return DriverManager.getConnection(url);
+		} catch (SQLException e) {
+			throw new AccesoDatosException("No se ha podido establecer la conexion con la base de datos", e);
+		}
+	}
+
+	private Producto filaAProducto(ResultSet rs) throws SQLException {
+		Long id = rs.getLong("id");
+		String codigoBarras = rs.getNString("codigo_barras");
+		String nombre = rs.getString("nombre");
+		BigDecimal precio = rs.getBigDecimal("precio");
+		LocalDate fechaCaducidad = rs.getDate("fecha_caducidad").toLocalDate();
+		Integer unidades = rs.getInt("unidades");
+		
+		return new Producto(id, codigoBarras, nombre, precio, fechaCaducidad, unidades);
 	}
 
 }
