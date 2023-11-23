@@ -13,10 +13,8 @@ import java.util.List;
 import com.tienda.entidades.Producto;
 
 public class DaoProductoSqlite implements DaoProducto {
-
+	private static final String url = "jdbc:sqlite:/home/trontzal/sqlite/amazonia.db";
 	private static final String SQL_SELECT = "SELECT id, codigo_barras, nombre, precio, fecha_caducidad, unidades FROM productos";
-
-	private String url;
 
 	static {
 		try {
@@ -24,10 +22,6 @@ public class DaoProductoSqlite implements DaoProducto {
 		} catch (ClassNotFoundException e) {
 			throw new AccesoDatosException("No se ha podido cargar el driver", e);
 		}
-	}
-
-	public DaoProductoSqlite(String url) {
-		this.url = url;
 	}
 
 	@Override
@@ -103,12 +97,12 @@ public class DaoProductoSqlite implements DaoProducto {
 
 	private Producto filaAProducto(ResultSet rs) throws SQLException {
 		Long id = rs.getLong("id");
-		String codigoBarras = rs.getNString("codigo_barras");
+		String codigoBarras = rs.getString("codigo_barras");
 		String nombre = rs.getString("nombre");
 		BigDecimal precio = rs.getBigDecimal("precio");
 		LocalDate fechaCaducidad = rs.getDate("fecha_caducidad").toLocalDate();
 		Integer unidades = rs.getInt("unidades");
-		
+
 		return new Producto(id, codigoBarras, nombre, precio, fechaCaducidad, unidades);
 	}
 
